@@ -13,14 +13,21 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 
 # Configure Celery Beat schedule for the task
-# app.conf.beat_schedule = {
-#     "send-appointment-reminders": {
-#         "task": "Patient.tasks.send_appointment_reminders",
-#         "schedule": timedelta(minutes=1),
-#     },
-# }
+app.conf.beat_schedule = {
+    "send-appointment-reminders": {
+        "task": "Patient.tasks.send_appointment_reminders",
+        "schedule": timedelta(minutes=1),
+    },
+}
 
 
 # celery -A Multi_Vendor_Medical_System worker --loglevel=info
 
 # celery -A Multi_Vendor_Medical_System beat
+
+
+# Celery Monitoring using Flower
+# pip install flower
+# celery -A Multi_Vendor_Medical_System flower --port=5555
+# celery -A Multi_Vendor_Medical_System flower
+#

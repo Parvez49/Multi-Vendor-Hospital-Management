@@ -7,8 +7,10 @@ from Doctor.models import (
     DoctorSpecialtyConnector,
     DoctorSchedule,
     DoctorScheduleDaysConnector,
+    EmergencyDoctorScedule,
 )
-from Hospital.models import Hospital
+from Common.models import HospitalRole
+from Hospital.models import Hospital, UserHospitalRole, UserHospitalRoleConnector
 
 from datetime import time
 
@@ -17,12 +19,11 @@ class Command(BaseCommand):
     help = "List all Doctor Model data in the database"
 
     def handle(self, *args, **kwargs):
-        """
         user, created = User.objects.get_or_create(
-            email="doctor@gmail.com",
+            email="doctor@example.com",
             defaults={
-                "first_name": "first name 1",
-                "last_name": "last name 1",
+                "first_name": "Istiaq",
+                "last_name": "Ahmed",
                 "gender": "Male",
                 "date_of_birth": "1995-01-01",
                 "height": 175.0,
@@ -49,15 +50,14 @@ class Command(BaseCommand):
                 "notes": "Sample notes",
             },
         )
-        specialty, created = Specialty.objects.get_or_create(specialty="specialty 1")
+        specialty, created = Specialty.objects.get_or_create(specialty="Cardiology")
         doctor_specialty, created = DoctorSpecialtyConnector.objects.get_or_create(
             doctor=doctor, specialty=specialty
         )
         hospital, created = Hospital.objects.get_or_create(
             registration_no="12345",
             defaults={
-                "hospital_name": "Sample Hospital",
-                "logo": "/home/Downloads/hospitallogo.png",
+                "hospital_name": "City Hospital",
                 "city": "Sample City",
                 "state": "Sample State",
                 "postal_code": "12345",
@@ -72,8 +72,17 @@ class Command(BaseCommand):
             },
         )
 
+        user_hospital, created = UserHospitalRole.objects.get_or_create(
+            user=user, hospital=hospital
+        )
+        role, created = HospitalRole.objects.get_or_create(role="Doctor")
+
+        user_hospital_role, created = UserHospitalRoleConnector.objects.get_or_create(
+            hospital_user=user_hospital, role=role
+        )
+
         start_time = time(9, 0)
-        end_time = time(17, 0)
+        end_time = time(12, 0)
         doctor_schedule, created = DoctorSchedule.objects.get_or_create(
             doctor=doctor,
             hospital=hospital,
@@ -85,6 +94,20 @@ class Command(BaseCommand):
         day, created = Days.objects.get_or_create(day="Monday")
         schedule_day, created = DoctorScheduleDaysConnector.objects.get_or_create(
             doctor_schedule=doctor_schedule, day=day
+        )
+
+        start_time = time(22, 0)
+        end_time = time(23, 59)
+        doctor_schedule, created = DoctorSchedule.objects.get_or_create(
+            doctor=doctor,
+            hospital=hospital,
+            start_time=start_time,
+            end_time=end_time,
+            activity_type="surgery",
+            maximum_patient=2,
+        )
+        schedule_day, created = EmergencyDoctorScedule.objects.get_or_create(
+            doctor_schedule=doctor_schedule, schedule_date="2023-10-20"
         )
         if created:
             self.stdout.write(self.style.SUCCESS("Sample data inserted successfully"))
@@ -218,3 +241,4 @@ class Command(BaseCommand):
             user.set_password("doctor")
             user.save()
             Doctor.objects.get_or_create(doctor_info=user, defaults=dat)
+    """

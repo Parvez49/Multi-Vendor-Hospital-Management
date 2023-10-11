@@ -1,14 +1,14 @@
 from django.core.management.base import BaseCommand
 
 from Accounts.models import User
-from Common.models import Days, Specialty, Medical_Test, Medicine
+from Common.models import HospitalRole, Days, Specialty, Medical_Test, Medicine
 from Doctor.models import (
     Doctor,
     DoctorSpecialtyConnector,
     DoctorSchedule,
     DoctorScheduleDaysConnector,
 )
-from Hospital.models import Hospital
+from Hospital.models import Hospital, UserHospitalRole, UserHospitalRoleConnector
 from Patient.models import (
     DoctorAppointment,
     Prescription,
@@ -24,11 +24,11 @@ class Command(BaseCommand):
     help = "List all Doctor Model data in the database"
 
     def handle(self, *args, **kwargs):
-        doctor_user, created = User.objects.get_or_create(
+        user, created = User.objects.get_or_create(
             email="doctor@example.com",
             defaults={
-                "first_name": "first name 1",
-                "last_name": "last name 1",
+                "first_name": "Istiaq",
+                "last_name": "Ahmed",
                 "gender": "Male",
                 "date_of_birth": "1995-01-01",
                 "height": 175.0,
@@ -38,11 +38,11 @@ class Command(BaseCommand):
                 "contact_number": "+1234567890",
             },
         )
-        doctor.set_password("doctor")
-        doctor.save()
+        user.set_password("doctor")
+        user.save()
         # Create a doctor associated with the user
         doctor, created = Doctor.objects.get_or_create(
-            doctor_info=doctor_user,
+            doctor_info=user,
             defaults={
                 "department": "Cardiology",
                 "designation": "Cardiologist",
@@ -55,15 +55,14 @@ class Command(BaseCommand):
                 "notes": "Sample notes",
             },
         )
-        specialty, created = Specialty.objects.get_or_create(specialty="specialty 1")
+        specialty, created = Specialty.objects.get_or_create(specialty="Cardiology")
         doctor_specialty, created = DoctorSpecialtyConnector.objects.get_or_create(
             doctor=doctor, specialty=specialty
         )
         hospital, created = Hospital.objects.get_or_create(
             registration_no="12345",
             defaults={
-                "hospital_name": "Sample Hospital",
-                "logo": "/home/Downloads/hospitallogo.png",
+                "hospital_name": "City Hospital",
                 "city": "Sample City",
                 "state": "Sample State",
                 "postal_code": "12345",
@@ -78,8 +77,17 @@ class Command(BaseCommand):
             },
         )
 
+        user_hospital, created = UserHospitalRole.objects.get_or_create(
+            user=user, hospital=hospital
+        )
+        role, created = HospitalRole.objects.get_or_create(role="Doctor")
+
+        user_hospital_role, created = UserHospitalRoleConnector.objects.get_or_create(
+            hospital_user=user_hospital, role=role
+        )
+
         start_time = time(9, 0)
-        end_time = time(17, 0)
+        end_time = time(12, 0)
         doctor_schedule, created = DoctorSchedule.objects.get_or_create(
             doctor=doctor,
             hospital=hospital,
@@ -110,47 +118,47 @@ class Command(BaseCommand):
         patient_user.set_password("patient")
         patient_user.save()
         doctor_appointment, created = DoctorAppointment.objects.get_or_create(
-            doctor_schedule_day=schedule_day, patient=patient_user, date="2023-10-09"
+            doctor_schedule_day=schedule_day, patient=patient_user, date="2023-10-16"
         )
 
-        prescription, created = Prescription.objects.get_or_create(
-            patient_doctor_booking=doctor_appointment,
-            defaults={
-                "prescription_date": "2023-10-09",
-                "previous_medications": "previous_medications",
-                "diagnosis": "diagnosis",
-                "special_instructions": "instructions",
-            },
-        )
-        test, created = Medical_Test.objects.get_or_create(
-            name="Test 1", defaults={"process": "process 1", "price": 450}
-        )
-        (
-            prescription_test,
-            created,
-        ) = PrescriptionMedicalTestConnector.objects.get_or_create(
-            prescription=prescription, test=test
-        )
-        medicine, created = Medicine.objects.get_or_create(
-            name="Medicine 1",
-            defaults={
-                "dosage": "10mg",
-                "duration": "7 days",
-                "method_of_taken": "Orally",
-                "morning": True,
-                "noon": False,
-                "evening": True,
-                "price": 9.99,
-            },
-        )
-        (
-            prescription_medicine,
-            created,
-        ) = PrescriptionMedicineConnector.objects.get_or_create(
-            prescription=prescription, medicine=medicine
-        )
+        # prescription, created = Prescription.objects.get_or_create(
+        #     patient_doctor_booking=doctor_appointment,
+        #     defaults={
+        #         "prescription_date": "2023-10-09",
+        #         "previous_medications": "previous_medications",
+        #         "diagnosis": "diagnosis",
+        #         "special_instructions": "instructions",
+        #     },
+        # )
+        # test, created = Medical_Test.objects.get_or_create(
+        #     name="Test 1", defaults={"process": "process 1", "price": 450}
+        # )
+        # (
+        #     prescription_test,
+        #     created,
+        # ) = PrescriptionMedicalTestConnector.objects.get_or_create(
+        #     prescription=prescription, test=test
+        # )
+        # medicine, created = Medicine.objects.get_or_create(
+        #     name="Medicine 1",
+        #     defaults={
+        #         "dosage": "10mg",
+        #         "duration": "7 days",
+        #         "method_of_taken": "Orally",
+        #         "morning": True,
+        #         "noon": False,
+        #         "evening": True,
+        #         "price": 9.99,
+        #     },
+        # )
+        # (
+        #     prescription_medicine,
+        #     created,
+        # ) = PrescriptionMedicineConnector.objects.get_or_create(
+        #     prescription=prescription, medicine=medicine
+        # )
 
-        if created:
-            self.stdout.write(self.style.SUCCESS("Sample data inserted successfully"))
-        else:
-            self.stdout.write(self.style.WARNING("Sample data already exists"))
+        # if created:
+        #     self.stdout.write(self.style.SUCCESS("Sample data inserted successfully"))
+        # else:
+        #     self.stdout.write(self.style.WARNING("Sample data already exists"))

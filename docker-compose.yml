@@ -47,6 +47,10 @@ services:
     volumes:
       - ./Multi-Vendor-Hospital-System:/Multi-Vendor-Hospital-System
     environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
 
@@ -66,13 +70,13 @@ services:
       - CELERY_BACKEND=redis://redis:6379/0
     depends_on:
       - redis
-      - db
+      
       
   celery_flower:
     build:
       context: .
     image: vendor_celery_flower
-    command: celery -A Multi_Vendor_Hospital_System --broker="${CELERY_BROKER}" flower
+    command: celery -A Multi_Vendor_Hospital_System flower --port=5555
     volumes:
       - .:/app
     environment:
@@ -80,10 +84,12 @@ services:
       - CELERY_BACKEND=redis://redis:6379/0
     
     ports:
-      - 5557:5555
+      - 5555:5555
     depends_on:
       - redis
-      - db
+      - project
+      - celery_worker
+      
     
 volumes:
   dev-db-data:

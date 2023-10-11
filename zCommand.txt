@@ -5,6 +5,9 @@ docker-compose build
 docker-compose run --rm project sh -c "flake8"
 docker-compose run --rm project sh -c "django-admin startproject Multi-Vendor-Hospital-System ."
 docker-compose run --rm project sh -c "python manage.py startapp app"
+docker-compose run --rm project sh -c "celery -A Multi_Vendor_Hospital_System worker --loglevel=info"
+docker-compose run --rm project sh -c "celery -A Multi_Vendor_Hospital_System beat"
+
 
 docker-compose up    # start service
 

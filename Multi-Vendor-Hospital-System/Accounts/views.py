@@ -259,7 +259,7 @@ class PublicUserCreate(CreateAPIView):
             response_data = {
                 "message": "Account created. Check your email to activate your account.",
             }
-            # serializer.save()
+            serializer.save()
             return Response(response_data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
