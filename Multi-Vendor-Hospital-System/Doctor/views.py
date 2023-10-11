@@ -44,8 +44,6 @@ from .models import (
 from .serializers import (
     PrivateDoctorSerializer,
     PrivateDoctorSpecialtyConnectorSerializer,
-    PrivateDoctorScheduleDaysConnectorSerializer,
-    PrivateDoctorScheduleDateConnectorSerializer,
 )
 
 # --------------------- Prescription Medical Test -------------------
@@ -69,18 +67,6 @@ class PrescriptionMedicineConnectorListCreate(ListCreateAPIView):
         return queryset
 
 
-class MedicineList(ListAPIView):
-    queryset = Medicine.objects.all()
-    permission_classes = [IsAuthenticated]
-    serializer_class = MedicineSerializer
-
-    filter_backends = [
-        filters.SearchFilter,
-        DjangoFilterBackend,
-    ]
-    search_fields = ["name"]
-
-
 class PrescriptionMedicalTestConnectorListCreate(ListCreateAPIView):
     serializer_class = PrescriptionMedicalTestConnectorSerializer
     permission_classes = [IsAppointmentDoctor]
@@ -97,18 +83,6 @@ class PrescriptionMedicalTestConnectorListCreate(ListCreateAPIView):
             prescription__patient_doctor_booking__doctor_schedule_day__doctor_schedule__doctor__doctor_info__email=email
         )
         return queryset
-
-
-class MedicalTestList(ListAPIView):
-    queryset = Medical_Test.objects.all()
-    serializer_class = MedicalTestSerializer
-    permission_classes = [IsAuthenticated]
-
-    filter_backends = [
-        filters.SearchFilter,
-        DjangoFilterBackend,
-    ]
-    search_fields = ["name"]
 
 
 # ------------------ Doctor Appointments ------------------
@@ -167,76 +141,6 @@ class DoctorAppointmentsList(ListAPIView):
     def get_queryset(self):
         queryset = DoctorAppointment.objects.filter(
             doctor_schedule_day__doctor_schedule__doctor__doctor_info__email=self.request.user.email
-        )
-        return queryset
-
-
-# ------------------ Doctor Schedule with Days -----------------
-
-
-class PrivateDoctorScheduleDaysConnectorRetrieveUpdateDestroy(
-    RetrieveUpdateDestroyAPIView
-):
-    serializer_class = PrivateDoctorScheduleDaysConnectorSerializer
-    permission_classes = [IsHospitalAdmin]
-
-    def get_object(self):
-        uuid = self.kwargs.get("schedule_uuid")
-        queryset = DoctorScheduleDaysConnector.objects.filter(uuid=uuid)
-        obj = get_object_or_404(queryset)
-        self.check_object_permissions(self.request, obj)
-        return obj
-
-
-class PrivateDoctorScheduleDaysConnectorListCreate(ListCreateAPIView):
-    serializer_class = PrivateDoctorScheduleDaysConnectorSerializer
-    permission_classes = [IsHospitalAdmin]
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["hospital_uuid"] = self.kwargs.get("hospital_uuid")
-        return context
-
-    def get_queryset(self):
-        uuid = self.kwargs.get("hospital_uuid")
-        hospital = Hospital.objects.filter(uuid=uuid).first()
-        queryset = DoctorScheduleDaysConnector.objects.filter(
-            doctor_schedule__hospital=hospital
-        )
-        return queryset
-
-
-# ------------------ Doctor Schedule with Date -----------------
-
-
-class PrivateDoctorScheduleDateConnectorRetrieveUpdateDestroy(
-    RetrieveUpdateDestroyAPIView
-):
-    serializer_class = PrivateDoctorScheduleDateConnectorSerializer
-    permission_classes = [IsHospitalAdmin]
-
-    def get_object(self):
-        uuid = self.kwargs.get("schedule_uuid")
-        queryset = EmergencyDoctorScedule.objects.filter(uuid=uuid)
-        obj = get_object_or_404(queryset)
-        self.check_object_permissions(self.request, obj)
-        return obj
-
-
-class PrivateDoctorScheduleDateConnectorListCreate(ListCreateAPIView):
-    serializer_class = PrivateDoctorScheduleDateConnectorSerializer
-    permission_classes = [IsHospitalAdmin]
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context["hospital_uuid"] = self.kwargs.get("hospital_uuid")
-        return context
-
-    def get_queryset(self):
-        uuid = self.kwargs.get("hospital_uuid")
-        hospital = Hospital.objects.filter(uuid=uuid).first()
-        queryset = EmergencyDoctorScedule.objects.filter(
-            doctor_schedule__hospital=hospital
         )
         return queryset
 

@@ -20,12 +20,6 @@ from .tasks import send_appointment_reminders
 from datetime import timedelta
 
 
-class HospitalListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Hospital
-        fields = ("uuid", "hospital_name", "description", "city")
-
-
 class PrescriptionSerializer(serializers.ModelSerializer):
     # patient_doctor_booking = serializers.UUIDField()  # Doctor Booking table
     patient = serializers.SerializerMethodField()
@@ -227,64 +221,6 @@ class DoctorAppointmentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("You already booked this appointment")
 
         return obj
-
-
-class HospitalDoctorListSerializer(serializers.ModelSerializer):
-    doctor = serializers.SerializerMethodField()
-    hospital = serializers.SerializerMethodField()
-
-    class Meta:
-        model = UserHospitalRoleConnector
-        fields = ("hospital", "doctor")
-
-    def get_doctor(self, obj):
-        user = obj.hospital_user.user
-        doctor_obj = Doctor.objects.filter(doctor_info=user).first()
-        user_data = {
-            "uuid": doctor_obj.uuid,
-            "name": f"{user.first_name} {user.last_name}",
-            "department": doctor_obj.department,
-            "degrees": doctor_obj.degrees,
-        }
-        return user_data
-
-    def get_hospital(self, obj):
-        hospital_data = {
-            "hospital_name": obj.hospital_user.hospital.hospital_name,
-            "description": obj.hospital_user.hospital.description,
-            "city": obj.hospital_user.hospital.city,
-        }
-        return hospital_data
-
-
-class HospitalDoctorScheduleSerializer(serializers.ModelSerializer):
-    schedule = serializers.SerializerMethodField()
-    hospital = serializers.SerializerMethodField()
-    doctor = serializers.SerializerMethodField()
-
-    class Meta:
-        model = DoctorScheduleDaysConnector
-        fields = ("hospital", "doctor", "schedule")
-
-    def get_schedule(self, obj):
-        doctor_schedule = obj.doctor_schedule
-        data = {
-            "uuid": obj.uuid,
-            "start_time": doctor_schedule.start_time,
-            "end_time": doctor_schedule.end_time,
-            "day": obj.day.day,
-        }
-        return data
-
-    def get_hospital(self, obj):
-        return obj.doctor_schedule.hospital.hospital_name
-
-    def get_doctor(self, obj):
-        return (
-            obj.doctor_schedule.doctor.doctor_info.first_name
-            + " "
-            + obj.doctor_schedule.doctor.doctor_info.last_name
-        )
 
 
 class HospitalDoctorScheduleAppointmentSerializer(serializers.ModelSerializer):
