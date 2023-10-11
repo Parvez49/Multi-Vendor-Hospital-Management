@@ -47,6 +47,9 @@ class User(AbstractUser, BaseModelWithUID):
     def __str__(self):
         return self.email
 
+    def get_full_name(self):
+        return self.first_name + " " + self.last_name
+
 
 class Notification(BaseModelWithUID, models.Model):
     recipient = models.ForeignKey(User, on_delete=models.CASCADE)

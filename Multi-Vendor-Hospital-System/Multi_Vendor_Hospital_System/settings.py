@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     # "silk",
     "drf_yasg",
     "django_filters",
-    # "autoslug",
+    "autoslug",
     # "debug_toolbar",
     "phonenumber_field",
     # Apps

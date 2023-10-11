@@ -27,19 +27,4 @@ urlpatterns = [
         views.PatientDoctorAppointmentListCreate.as_view(),
         name="patient-doctor-appointment-list",
     ),
-    path(
-        "/hospitals/<uuid:hospital_uuid>/doctors/<uuid:doctor_uuid>/schedules",
-        views.HospitalDoctorSchedule.as_view(),
-        name="hospital-doctor-schedule-list",
-    ),
-    path(
-        "/hospitals/<uuid:hospital_uuid>/doctors",
-        views.HospitalDoctorList.as_view(),
-        name="hospital-doctor-list",
-    ),
-    path(
-        "/hospitals",
-        views.HospitalList.as_view(),
-        name="hospital-list",
-    ),
 ]

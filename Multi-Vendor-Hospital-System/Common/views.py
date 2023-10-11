@@ -6,7 +6,7 @@ from rest_framework.generics import (
     RetrieveUpdateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import AllowAny, IsAdminUser
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
@@ -106,6 +106,11 @@ class MedicalTestListCreate(ListCreateAPIView):
     ]
     search_fields = ["name"]
 
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]  # Allow any for GET requests
+        return [IsAdminUser()]
+
 
 # ------------- Medicine --------------
 
@@ -124,10 +129,14 @@ class MedicineRetrieveUpdate(RetrieveUpdateAPIView):
 class MedicineListCreate(ListCreateAPIView):
     queryset = Medicine.objects.all()
     serializer_class = MedicineSerializer
-    permission_classes = [IsAdminUser]
 
     filter_backends = [
         filters.SearchFilter,
         DjangoFilterBackend,
     ]
     search_fields = ["name"]
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]  # Allow any for GET requests
+        return [IsAdminUser()]

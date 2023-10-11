@@ -12,6 +12,8 @@ from Accounts.permissions import authenticateUser
 from Patient.models import DoctorAppointment
 from Hospital.models import Hospital, UserHospitalRoleConnector
 
+from .models import Doctor
+
 
 class IsHospitalDoctor(BasePermission):
     def has_permission(self, request, view):
@@ -44,6 +46,17 @@ class IsAppointmentDoctor(BasePermission):
         if DoctorAppointment.objects.filter(
             uuid=appointment_uuid,
             doctor_schedule_day__doctor_schedule__doctor__doctor_info__email=email,
+        ).exists():
+            return True
+        else:
+            raise PermissionDenied("You have no permission!!!")
+
+
+class IsDoctor(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        if Doctor.objects.filter(
+            doctor_info=user,
         ).exists():
             return True
         else:

@@ -12,7 +12,7 @@ from .models import (
 
 
 class DoctorAttr(admin.ModelAdmin):
-    list_display = ["uuid", "doctor_info"]
+    list_display = ["uuid", "slug", "doctor_info"]
 
 
 admin.site.register(Doctor, DoctorAttr)

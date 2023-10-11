@@ -10,8 +10,8 @@ from .models import Hospital, UserHospitalRoleConnector
 class IsHospitalAdmin(BasePermission):
     def has_permission(self, request, view):
         user = request.user
-        uuid = view.kwargs.get("hospital_uuid")
-        hospital = Hospital.objects.filter(uuid=uuid).first()
+        slug = view.kwargs.get("hospital_slug")
+        hospital = Hospital.objects.filter(slug=slug).first()
         if not hospital:
             raise ValidationError("Wrong hospital uuid!!!")
         if UserHospitalRoleConnector.objects.filter(

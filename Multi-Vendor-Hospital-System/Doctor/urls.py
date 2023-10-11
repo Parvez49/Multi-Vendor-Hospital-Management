@@ -8,16 +8,10 @@ urlpatterns = [
         views.PrescriptionMedicineConnectorListCreate.as_view(),
         name="doctor-appointments-Prescription-medicine",
     ),
-    path("/medicines", views.MedicineList.as_view(), name="medicine-list-doctor"),
     path(
         "/appointments/<uuid:appointment_uuid>/prescriptions/<uuid:prescription_uuid>/medical/tests",
         views.PrescriptionMedicalTestConnectorListCreate.as_view(),
         name="doctor-appointments-Prescription-medical-test",
-    ),
-    path(
-        "/medical/tests",
-        views.MedicalTestList.as_view(),
-        name="medical-test-list-doctor",
     ),
     path(
         "/appointments/<uuid:appointment_uuid>/prescriptions/<uuid:prescription_uuid>",
@@ -38,27 +32,6 @@ urlpatterns = [
         "/appointments",
         views.DoctorAppointmentsList.as_view(),
         name="doctor-appointments-list",
-    ),
-    # ------------------ Doctor Schedule ----------------------------
-    path(
-        "/hospitals/<uuid:hospital_uuid>/schedules/days/<uuid:schedule_uuid>",
-        views.PrivateDoctorScheduleDaysConnectorRetrieveUpdateDestroy.as_view(),
-        name="doctor-schedule-with-day-details",
-    ),
-    path(
-        "/hospitals/<uuid:hospital_uuid>/schedules/days",
-        views.PrivateDoctorScheduleDaysConnectorListCreate.as_view(),
-        name="create-doctor-schedule-with-day",
-    ),
-    path(
-        "/hospitals/<uuid:hospital_uuid>/schedules/date/<uuid:schedule_uuid>",
-        views.PrivateDoctorScheduleDateConnectorRetrieveUpdateDestroy.as_view(),
-        name="doctor-schedule-with-date-details",
-    ),
-    path(
-        "/hospitals/<uuid:hospital_uuid>/schedules/date",
-        views.PrivateDoctorScheduleDateConnectorListCreate.as_view(),
-        name="create-doctor-schedule-with-date",
     ),
     # ---------------- Doctor Specialty -------------------------
     path(
