@@ -37,9 +37,9 @@ urlpatterns = [
         views.HospitalDoctorList.as_view(),
         name="hospital-doctor-list",
     ),
-    path(
-        "/hospitals",
-        views.HospitalList.as_view(),
-        name="hospital-list",
-    ),
+    # path(
+    #     "/hospitals",
+    #     views.HospitalList.as_view(),
+    #     name="hospital-list",
+    # ),
 ]

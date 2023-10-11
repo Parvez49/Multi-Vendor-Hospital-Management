@@ -1,5 +1,8 @@
 from django.db import models
 
+from autoslug import AutoSlugField
+
+
 from Accounts.models import User
 from Hospital.models import Hospital
 from datetime import date, time
@@ -10,7 +13,12 @@ from Common.models import Days, Specialty
 
 
 class Doctor(BaseModelWithUID):
-    doctor_info = doctor_info = models.OneToOneField(User, on_delete=models.CASCADE)
+    doctor_info = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def get_full_name(self):
+        return self.doctor_info.get_full_name()
+
+    slug = AutoSlugField(populate_from="get_full_name", unique=True)
     # The department within the hospital (e.g., Cardiology, Pediatrics) where the doctor works.
     department = models.CharField(max_length=100)
     # The doctor's designation or title within the hospital (e.g., Cardiologist, Surgeon).
