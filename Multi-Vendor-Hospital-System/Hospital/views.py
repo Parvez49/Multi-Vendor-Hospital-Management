@@ -4,7 +4,7 @@ from rest_framework.generics import (
     RetrieveUpdateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from .models import (
     Founder,
     Hospital,
@@ -101,14 +101,26 @@ class PrivateHospitalRetrieveUpdateDestroy(RetrieveUpdateAPIView):
     serializer_class = PrivateHospitalSerializer
     permission_classes = [IsAdminUser]
 
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        return [IsAdminUser()]
+
     def get_object(self):
-        uuid = self.kwargs.get("hospital_uuid")
-        queryset = Hospital.objects.filter(uuid=uuid)
+        slug = self.kwargs.get("hospital_slug")
+        queryset = Hospital.objects.filter(slug=slug)
         obj = get_object_or_404(queryset)
         return obj
 
 
 class PrivateHospitalListCreate(ListCreateAPIView):
-    queryset = Hospital.objects.all()
     serializer_class = PrivateHospitalSerializer
-    permission_classes = [IsAdminUser]
+
+    def get_permissions(self):
+        if self.request.method != "POST":
+            return [AllowAny()]  # Allow any for GET requests
+        return [IsAdminUser()]
+
+    def get_queryset(self):
+        queryset = Hospital.objects.all()
+        return queryset

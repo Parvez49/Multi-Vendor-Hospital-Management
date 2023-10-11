@@ -19,7 +19,7 @@ admin.site.register(HospitalSpecialtyConnector, HospitalSpecialtyConnectorAttr)
 
 
 class HospitalAttr(admin.ModelAdmin):
-    list_display = ["uuid", "registration_no", "hospital_name", "logo", "city"]
+    list_display = ["uuid", "registration_no", "hospital_name", "slug", "logo", "city"]
 
 
 admin.site.register(Hospital, HospitalAttr)

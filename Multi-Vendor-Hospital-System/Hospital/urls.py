@@ -35,14 +35,13 @@ urlpatterns = [
         views.PrivateFounderListCreate.as_view(),
         name="founder-list-create",
     ),
-    # ------------ Hospital -----------------
     path(
-        "/<uuid:hospital_uuid>",
+        "/<slug:hospital_slug>",
         views.PrivateHospitalRetrieveUpdateDestroy.as_view(),
         name="hospital-detail",
     ),
     path(
-        "/register",
+        "",
         views.PrivateHospitalListCreate.as_view(),
         name="hospital-list-create",
     ),

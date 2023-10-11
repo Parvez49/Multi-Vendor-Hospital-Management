@@ -145,11 +145,13 @@ class PhoneNumberSerializerField(serializers.CharField):
 
 class PrivateHospitalSerializer(serializers.ModelSerializer):
     contact_number = PhoneNumberSerializerField()
+    slug = serializers.SerializerMethodField()
 
     class Meta:
         model = Hospital
         fields = (
             "uuid",
+            "slug",
             "registration_no",
             "hospital_name",
             "city",
@@ -165,3 +167,6 @@ class PrivateHospitalSerializer(serializers.ModelSerializer):
             "facilities",
             "logo",
         )
+
+    def get_slug(self, obj):
+        return obj.slug

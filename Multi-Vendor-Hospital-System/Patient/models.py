@@ -18,7 +18,7 @@ class DoctorAppointment(BaseModelWithUID):
     patient = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField()
     isnotified = models.BooleanField(default=False)
-    serial_no = models.PositiveSmallIntegerField(default=1, null=True, blank=True)
+    serial_no = models.PositiveSmallIntegerField(default=0, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.patient.first_name + " " + str(self.date)
