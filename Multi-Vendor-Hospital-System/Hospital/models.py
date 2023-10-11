@@ -14,7 +14,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 class Hospital(BaseModelWithUID, models.Model):
     registration_no = models.CharField(max_length=255, unique=True)
     hospital_name = models.CharField(max_length=255)  # official name of the hospital
-    # slug = AutoSlugField(populate_from="title", unique=True)
+    # slug = AutoSlugField(populate_from="hospital_name", unique=True)
     logo = models.ImageField(upload_to="hospital_logos/", blank=True)
 
     # Location of hospital
