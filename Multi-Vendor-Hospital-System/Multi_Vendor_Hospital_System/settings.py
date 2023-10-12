@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django_filters",
     "autoslug",
     "versatileimagefield",
+    "simple_history",
     # "debug_toolbar",
     "phonenumber_field",
     # Apps
