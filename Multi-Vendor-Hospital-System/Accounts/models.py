@@ -8,6 +8,9 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import AbstractUser
 from .managers import CustomUserManager
 
+from versatileimagefield.fields import VersatileImageField
+from versatileimagefield.fields import PPOIField
+
 
 class BloodGroups(models.TextChoices):
     NOT_SET = "Not Set", "Not Set"
@@ -37,7 +40,14 @@ class User(AbstractUser, BaseModelWithUID):
     contact_number = PhoneNumberField(
         blank=True, db_index=True, verbose_name="Phone Number"
     )
-    profile_picture = models.ImageField(upload_to="user_profiles/", blank=True)
+    # profile_picture = models.ImageField(upload_to="user_profiles/", blank=True)
+    profile_picture = VersatileImageField(
+        "Headshot",
+        upload_to="headshots/",
+        ppoi_field="headshot_ppoi",
+        default="placeholder/man.jpg",  # Set the default placeholder image path
+    )
+    headshot_ppoi = PPOIField()
 
     username = None
     USERNAME_FIELD = "email"
