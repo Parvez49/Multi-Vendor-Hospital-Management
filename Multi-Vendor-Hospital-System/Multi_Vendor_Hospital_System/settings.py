@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
-    # "silk",
+    "silk",
     "drf_yasg",
     "django_filters",
     "autoslug",
+    "versatileimagefield",
+    "simple_history",
     # "debug_toolbar",
     "phonenumber_field",
     # Apps
@@ -64,7 +66,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "silk.middleware.SilkyMiddleware",
+    "silk.middleware.SilkyMiddleware",
     # "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
@@ -183,6 +185,13 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = "parvezhossen81@gmail.com"  # Gmail
 EMAIL_HOST_PASSWORD = "nniyielofjlcuvav"  # app passwords
 
+
+VERSATILEIMAGEFIELD_SETTINGS = {
+    "cache_length": 5 * 24 * 3600,  # 5 days
+    "cache_name": "versatileimagefield_cache",
+    "cache_timeout": 5 * 24 * 3600,
+}
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -190,7 +199,15 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
-    }
+    },
+    "versatileimagefield_cache": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",  # Change this if your Redis server is on a different host/port
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "TIMEOUT": 5 * 24 * 3600,
+    },
 }
 
 # Celery settings

@@ -3,6 +3,7 @@ from datetime import date
 
 # Create your models here.
 
+from simple_history.models import HistoricalRecords
 
 from Accounts.models import User
 from Doctor.models import DoctorScheduleDaysConnector, EmergencyDoctorScedule
@@ -20,6 +21,8 @@ class DoctorAppointment(BaseModelWithUID):
     isnotified = models.BooleanField(default=False)
     serial_no = models.PositiveSmallIntegerField(default=0, null=True, blank=True)
 
+    history = HistoricalRecords()
+
     def __str__(self) -> str:
         return self.patient.first_name + " " + str(self.date)
 
@@ -32,6 +35,8 @@ class EmergencyDoctorAppointment(BaseModelWithUID):
         EmergencyDoctorScedule, on_delete=models.CASCADE
     )
     patient = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"Doctor: {self.doctor_schedule_day.doctor_schedule.doctor.doctor_info.first_name} - Patient: {self.patient.first_name} - Date: {self.doctor_schedule_date.schedule_date}"
@@ -54,6 +59,8 @@ class PrescriptionMedicalTestConnector(BaseModelWithUID):
     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
     test = models.ForeignKey(Medical_Test, on_delete=models.CASCADE)
 
+    history = HistoricalRecords()
+
     def __str__(self) -> str:
         return f"Prescription:{self.prescription} Test:{self.test}"
 
@@ -61,6 +68,8 @@ class PrescriptionMedicalTestConnector(BaseModelWithUID):
 class PrescriptionMedicineConnector(BaseModelWithUID):
     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
+
+    history = HistoricalRecords()
 
     def __str__(self) -> str:
         return f"{self.prescription} {self.medicine}"
