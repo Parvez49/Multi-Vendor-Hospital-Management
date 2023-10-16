@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "simple_history",
     # "debug_toolbar",
     "phonenumber_field",
+    "channels",
     # Apps
     "core",
     "Accounts",
@@ -56,6 +57,7 @@ INSTALLED_APPS = [
     "Hospital",
     "Doctor",
     "Patient",
+    "chat",
 ]
 
 MIDDLEWARE = [
@@ -90,6 +92,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "Multi_Vendor_Hospital_System.wsgi.application"
+ASGI_APPLICATION = "Multi_Vendor_Hospital_System.asgi.application"
 
 
 # Database
@@ -193,6 +196,14 @@ VERSATILEIMAGEFIELD_SETTINGS = {
     "cache_timeout": 5 * 24 * 3600,
 }
 
+# Celery settings
+# CELERY_BROKER_URL = "redis://redis:6379/0"
+# CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")
+
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -211,13 +222,15 @@ CACHES = {
     },
 }
 
-# Celery settings
-# CELERY_BROKER_URL = "redis://redis:6379/0"
-# CELERY_RESULT_BACKEND = "redis://redis:6379/0"
 
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")
-
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=2),
