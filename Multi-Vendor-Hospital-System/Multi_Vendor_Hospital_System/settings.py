@@ -47,9 +47,10 @@ INSTALLED_APPS = [
     "autoslug",
     "versatileimagefield",
     "simple_history",
-    # "debug_toolbar",
+    "debug_toolbar",
     "phonenumber_field",
-    "channels",
+    # "channels",
+    "django_elasticsearch_dsl",
     # Apps
     "core",
     "Accounts",
@@ -57,7 +58,8 @@ INSTALLED_APPS = [
     "Hospital",
     "Doctor",
     "Patient",
-    "chat",
+    "search"
+    # "chat",
 ]
 
 MIDDLEWARE = [
@@ -69,7 +71,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "silk.middleware.SilkyMiddleware",
-    # "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
@@ -92,7 +94,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "Multi_Vendor_Hospital_System.wsgi.application"
-ASGI_APPLICATION = "Multi_Vendor_Hospital_System.asgi.application"
+# ASGI_APPLICATION = "Multi_Vendor_Hospital_System.asgi.application"
 
 
 # Database
@@ -180,6 +182,8 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 25,
 }
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -223,17 +227,27 @@ CACHES = {
 }
 
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
-        },
-    },
-}
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("127.0.0.1", 6379)],
+#         },
+#     },
+# }
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=2),
     "ALGORITHM": "HS256",
     "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+
+ELASTICSEARCH_DSL = {
+    "default": {
+        "hosts": "https://localhost:9200",
+        "http_auth": ("elastic", "Of4gkT_0MrV5n0GLht10"),
+        "verify_certs": False,
+    }
 }
