@@ -27,7 +27,7 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Snippets API",
+        title="Multi-Vendor Hospital Management API",
         default_version="v1",
         description="Test description",
         terms_of_service="https://www.google.com/policies/terms/",
@@ -39,7 +39,8 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path("chat", include("chat.urls")),
+    path("search", include("search.urls")),
+    # path("chat", include("chat.urls")),
     path("patients", include("Patient.urls")),
     path("doctors", include("Doctor.urls")),
     path("hospitals", include("Hospital.urls")),
@@ -47,7 +48,7 @@ urlpatterns = [
     path("commons", include("Common.urls")),
     path("admin/", admin.site.urls),
     path("api-auth", include("rest_framework.urls")),
-    # path("__debug__", include("debug_toolbar.urls")),
+    path("__debug__", include("debug_toolbar.urls")),
     path("silk", include("silk.urls", namespace="silk")),
     path(
         "swagger",
