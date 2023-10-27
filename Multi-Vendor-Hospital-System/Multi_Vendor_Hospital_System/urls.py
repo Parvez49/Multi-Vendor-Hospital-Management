@@ -48,11 +48,17 @@ urlpatterns = [
     path("commons", include("Common.urls")),
     path("admin/", admin.site.urls),
     path("api-auth", include("rest_framework.urls")),
-    path("__debug__", include("debug_toolbar.urls")),
-    path("silk", include("silk.urls", namespace="silk")),
+    # path("silk", include("silk.urls", namespace="silk")),
     path(
         "swagger",
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]  # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG == "True":
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [
+        path("silk", include("silk.urls", namespace="silk")),
+        path("__debug__", include("debug_toolbar.urls")),
+    ]
