@@ -21,7 +21,7 @@ app.conf.beat_schedule = {
 }
 
 
-# celery -A Multi_Vendor_Medical_System worker --loglevel=info
+# celery -A Multi_Vendor_Hospital_System worker --loglevel=info
 
 # celery -A Multi_Vendor_Medical_System beat
 

@@ -97,18 +97,18 @@ WSGI_APPLICATION = "Multi_Vendor_Hospital_System.wsgi.application"
 # ASGI_APPLICATION = "Multi_Vendor_Hospital_System.asgi.application"
 
 
-# Database
+# Database Docker + Local
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME", "MultiVendorHospital"),
-        "USER": os.environ.get("DB_USER", "postgres"),
-        "PASSWORD": os.environ.get("DB_PASS", "admin"),
-        "HOST": os.environ.get("DB_HOST", "127.0.0.1"),
-        "PORT": "5432",
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": os.environ.get("DB_NAME", "MultiVendorHospital"),
+#         "USER": os.environ.get("DB_USER", "postgres"),
+#         "PASSWORD": os.environ.get("DB_PASS", "admin"),
+#         "HOST": os.environ.get("DB_HOST", "127.0.0.1"),
+#         "PORT": "5432",
+#     }
+# }
 
 # Docker
 # DATABASES = {
@@ -120,6 +120,18 @@ DATABASES = {
 #         "PASSWORD": os.environ.get("DB_PASS"),
 #     }
 # }
+
+# AWS
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": "database-1.ccugnkxcigcf.ap-southeast-1.rds.amazonaws.com",
+        "NAME": "multivendor",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "Port": "5432",
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -204,8 +216,17 @@ VERSATILEIMAGEFIELD_SETTINGS = {
 # CELERY_BROKER_URL = "redis://redis:6379/0"
 # CELERY_RESULT_BACKEND = "redis://redis:6379/0"
 
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")
+# AWS
+CELERY_BROKER_URL = (
+    "redis://rediscluster.pe9cpy.ng.0001.apse1.cache.amazonaws.com:6379/0"
+)
+CELERY_RESULT_BACKEND = (
+    "redis://rediscluster.pe9cpy.ng.0001.apse1.cache.amazonaws.com:6379/0"
+)
+
+# Docker
+# CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
+# CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")
 
 
 CACHES = {
