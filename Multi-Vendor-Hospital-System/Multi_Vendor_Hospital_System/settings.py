@@ -58,7 +58,6 @@ THIRD_PARTY_APPS = [
     "django_elasticsearch_dsl",
 ]
 PROJECT_APPS = [
-    # Apps
     "core",
     "Accounts",
     "Common",
