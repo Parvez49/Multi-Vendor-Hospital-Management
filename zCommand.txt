@@ -1,3 +1,19 @@
+
+# ------------------------ Celery ---------------------------
+
+# redis-server
+# celery worker: celery -A Multi_Vendor_Hospital_System worker --loglevel=info
+# celery beat: celery -A Multi_Vendor_Hospital_System beat
+
+
+
+# Celery Monitoring using Flower
+# pip install flower
+# celery -A Multi_Vendor_Medical_System flower --port=5555
+# celery -A Multi_Vendor_Medical_System flower
+
+
+# ------------------------- Docker --------------------------
 docker build .   
 docker-compose build
 
@@ -26,3 +42,23 @@ docker-compose run --rm project sh -c "python manage.py wait_for_db && python ma
 
 docker-compose up -d
 docker ps
+
+
+# -------------------------- Elastic Search ----------------------------
+
+https://testdriven.io/blog/django-drf-elasticsearch/#what-is-elasticsearch
+
+pip install elasticsearch, elasticsearch-dsl, django-elasticsearch-dsl
+
+INSTALLED_APPS = [
+    'django_elasticsearch_dsl',
+    'rest_framework',
+]
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+}
+
+# command 
+    - python manage.py search_index --rebuild    # creating elasticsearch index

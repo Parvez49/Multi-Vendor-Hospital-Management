@@ -21,10 +21,23 @@ services:
       - DB_NAME=devdb
       - DB_USER=devuser
       - DB_PASS=changeme
-      - CACHE_URL=redis://redis:6379/1
+      - CACHE_URL=redis://redis:6379/1 
+
     depends_on:
       - db
       - redis
+      - elasticsearch
+      - daphne 
+      
+  daphne:
+    image: daphne/daphne
+    command: daphne -u /tmp/daphne.sock Multi-Vendor-Hospital-System.asgi:application
+    volumes:
+      - ./Multi-Vendor-Hospital-System:/Multi-Vendor-Hospital-System:z
+    depends_on:
+      - redis  # Ensure it can connect to the Redis service
+    
+      
 
   db:
     image: postgres:14-alpine
@@ -89,6 +102,13 @@ services:
       - redis
       - project
       - celery_worker
+
+  elasticsearch:
+    image: elasticsearch:5.6.16-alpine
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
       
     
 volumes:
