@@ -149,6 +149,9 @@ class HospitalDoctorScheduleSerializer(serializers.ModelSerializer):
         )
 
 
+from Doctor.serializers import PrivateDoctorSerializer
+
+
 class HospitalDoctorListSerializer(serializers.ModelSerializer):
     doctor = serializers.SerializerMethodField()
     hospital = serializers.SerializerMethodField()

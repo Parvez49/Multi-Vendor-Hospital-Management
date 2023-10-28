@@ -1,5 +1,7 @@
 from rest_framework import serializers
+
 from Accounts.models import User
+from Accounts.serializers import PublicUserSerializer
 from Common.models import Specialty, Medical_Test, Medicine
 from Hospital.models import Hospital
 from Patient.models import DoctorAppointment
@@ -23,26 +25,16 @@ class PrivateDoctorSpecialtyConnectorSerializer(serializers.ModelSerializer):
         model = DoctorSpecialtyConnector
         fields = ["uuid", "doctor", "specialty"]
 
-    def validate(self, attrs):
-        user_email = self.context.get("user_email")
-        doctor = Doctor.objects.filter(doctor_info__email=user_email).first()
-        if not doctor:
-            raise serializers.ValidationError("Doctor not found!!!")
-        attrs["doctor"] = doctor.uuid
-        return super().validate(attrs)
-
     def create(self, validated_data):
         specialty = Specialty.objects.filter(uuid=validated_data["specialty"]).first()
         if not specialty:
             raise serializers.ValidationError("Specialty not found!!!")
-        doctor = Doctor.objects.filter(uuid=validated_data["doctor"]).first()
+
+        user = self.context.get("user")
+        doctor = Doctor.objects.filter(doctor_info=user).first()
         if not doctor:
             raise serializers.ValidationError("Doctor not registered!!!")
-        if (
-            DoctorSpecialtyConnector.objects.filter(doctor=doctor).first()
-            and DoctorSpecialtyConnector.objects.filter(specialty=specialty).first()
-        ):
-            raise serializers.ValidationError("Already registered!!!")
+
         obj = DoctorSpecialtyConnector(doctor=doctor, specialty=specialty)
         obj.save()
         return obj
@@ -52,13 +44,15 @@ class PrivateDoctorSpecialtyConnectorSerializer(serializers.ModelSerializer):
 
 
 class PrivateDoctorSerializer(serializers.ModelSerializer):
-    doctor_info = serializers.UUIDField()
+    doctor_data = serializers.UUIDField(write_only=True)
+    doctor_info = PublicUserSerializer(read_only=True)
 
     class Meta:
         model = Doctor
         fields = (
             "uuid",
             "doctor_info",
+            "doctor_data",
             "department",
             "designation",
             "degrees",
@@ -71,12 +65,10 @@ class PrivateDoctorSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        doctor_uuid = validated_data.pop("doctor_info")
+        doctor_uuid = validated_data.pop("doctor_data")
         obj = User.objects.filter(uuid=doctor_uuid).first()
-        # doctor_obj = Doctor.objects.create(doctor_info=obj, **validated_data)
+        doctor_obj, _ = Doctor.objects.select_related("doctor_info").get_or_create(
+            doctor_info=obj, **validated_data
+        )
 
-        doctor_obj = Doctor.objects.filter(doctor_info=obj, **validated_data).first()
-        if not doctor_obj:
-            doctor_obj = Doctor.objects.create(doctor_info=obj, **validated_data)
-            doctor_obj.save()
         return doctor_obj

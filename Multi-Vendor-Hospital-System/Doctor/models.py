@@ -46,6 +46,10 @@ class DoctorSpecialtyConnector(BaseModelWithUID):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     specialty = models.ForeignKey(Specialty, on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ("-created_at",)
+        unique_together = (("doctor", "specialty"),)
+
 
 ACTIVITY_CHOICES = (
     ("patient_exam", "Patient Examination"),

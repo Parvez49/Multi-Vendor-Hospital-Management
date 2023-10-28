@@ -121,8 +121,13 @@ class HospitalDoctorSchedule(ListAPIView):
         return queryset
 
 
+from Doctor.models import Doctor
+from Doctor.serializers import PrivateDoctorSerializer
+
+
 class HospitalDoctorList(ListAPIView):
-    serializer_class = HospitalDoctorListSerializer
+    # serializer_class = HospitalDoctorListSerializer
+    serializer_class = PrivateDoctorSerializer
     permission_classes = [AllowAny]
 
     filter_backends = [
@@ -135,6 +140,14 @@ class HospitalDoctorList(ListAPIView):
     ]
 
     def get_queryset(self):
+        hospital_slug = self.kwargs.get("hospital_slug")
+        # hospital = get_object_or_404(Hospital, slug=hospital_slug)
+
+        # # Query to get the doctors associated with the hospital
+        # queryset = Doctor.objects.select_related("doctor_info").filter(
+        #     doctor_info__userhospitalrole__hospital=hospital
+        # )
+
         hospital_slug = self.kwargs.get("hospital_slug")
         queryset = (
             UserHospitalRoleConnector.objects.select_related("hospital_user", "role")
@@ -264,26 +277,31 @@ class PrivateHospitalListCreate(ListCreateAPIView):
 
 
 """
-DoctorScheduleDaysConnector.objects.filter(
-            doctor_schedule__hospital__uuid=hospital_uuid,
-            doctor_schedule__doctor__uuid=doctor_uuid,
-            )
+class HospitalDoctorList(ListAPIView):
+    #serializer_class = HospitalDoctorListSerializer
+    permission_classes = [AllowAny]
 
-DoctorScheduleDaysConnector.objects.select_related(
-                "doctor_schedule", "day", "doctor_schedule__hospital"
-            )
-            .prefetch_related("doctor_schedule__doctor")
-            .filter(
-                doctor_schedule__hospital__uuid=hospital_uuid,
-                doctor_schedule__doctor__uuid=doctor_uuid,
-            )
-DoctorScheduleDaysConnector.objects.select_related(
-                "doctor_schedule",
-                "day",
-            )
-            .prefetch_related("doctor_schedule__doctor", "doctor_schedule__hospital")
-            .filter(
-                doctor_schedule__hospital__uuid=hospital_uuid,
-                doctor_schedule__doctor__uuid=doctor_uuid,
-            )
+    def get_queryset(self):
+        hospital_slug = self.kwargs.get("hospital_slug")
+        
+        # Get the hospital object based on the slug
+        hospital = get_object_or_404(Hospital, slug=hospital_slug)
+        
+        # Query to get the doctors associated with the hospital
+        queryset = Doctor.objects.filter(doctor_info__userhospitalrole__hospital=hospital)
+
+        return queryset
+
+
+suppose, i need
+{
+    "hospital":{
+                ......
+         }
+     "doctors":{
+             {},{}.....
+     }
+}
+this type output of doctor list with hospital data. how changes i have to change in apiview?
+you may write serializer or wish?
 """

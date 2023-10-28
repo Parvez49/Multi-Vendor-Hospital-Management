@@ -24,7 +24,7 @@ from .permissions import authenticateUser, IsLoggedIn, IsSuperUser
 from .serializers import (
     NotificationSerializer,
     NotificationDetailSerializer,
-    PublicUserListSerializer,
+    PublicUserSerializer,
 )
 from .tasks import send_verification_email
 
@@ -76,8 +76,6 @@ class NotificationList(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        print(self.request.user)
-
         email = self.request.user.email
         return Notification.objects.filter(recipient__email=email)
 
@@ -201,7 +199,7 @@ class PublicUserLogin(APIView):
 
 class PublicUserRetrieveUpdateDestroy(RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = PublicUserListSerializer
+    serializer_class = PublicUserSerializer
 
     def get_queryset(self):
         email = self.request.user.email
@@ -219,7 +217,7 @@ from rest_framework.permissions import IsAdminUser
 
 class PrivateUserList(ListAPIView):
     queryset = User.objects.all()
-    serializer_class = PublicUserListSerializer
+    serializer_class = PublicUserSerializer
     # permission_classes = [IsSuperUser]
     permission_classes = [IsAdminUser]
 
@@ -244,7 +242,7 @@ class PublicVerifyAccount(APIView):
 
 
 class PublicUserCreate(CreateAPIView):
-    serializer_class = PublicUserListSerializer
+    serializer_class = PublicUserSerializer
     permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):

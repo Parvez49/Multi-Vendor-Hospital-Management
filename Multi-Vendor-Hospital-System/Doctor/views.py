@@ -167,15 +167,17 @@ class PrivateDoctorSpecialtyConnectorListCreate(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_serializer_context(self):
-        user_email = self.request.user.email
+        print("context")
+        user = self.request.user
         context = super().get_serializer_context()
-        context["user_email"] = user_email
+        context["user"] = user
         return context
 
     def get_queryset(self):
-        queryset = DoctorSpecialtyConnector.objects.filter(
-            doctor__doctor_info__email=self.request.user.email
-        )
+        print("queryset")
+        queryset = DoctorSpecialtyConnector.objects.select_related(
+            "doctor", "doctor__doctor_info", "specialty"
+        ).filter(doctor__doctor_info=self.request.user)
         return queryset
 
 
@@ -189,7 +191,9 @@ class PrivateDoctorRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     def get_object(self):
         uuid = self.request.user.uuid
         print("uuid", uuid)
-        queryset = Doctor.objects.filter(doctor_info__uuid=uuid)
+        queryset = Doctor.objects.select_related("doctor_info").filter(
+            doctor_info__uuid=uuid
+        )
         obj = get_object_or_404(queryset)
         self.check_object_permissions(self.request, obj)
         return obj
@@ -199,6 +203,6 @@ class PrivateDoctorProfileUpdate(CreateAPIView):
     serializer_class = PrivateDoctorSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_object(self):
-        # Return the current user's Doctor object
-        return Doctor.objects.get(doctor_info=self.request.user)
+    # def get_object(self):
+    #     # Return the current user's Doctor object
+    #     return Doctor.objects.get(doctor_info=self.request.user)

@@ -50,7 +50,7 @@ class PhoneNumberSerializerField(serializers.CharField):
         return data
 
 
-class PublicUserListSerializer(serializers.ModelSerializer):
+class PublicUserSerializer(serializers.ModelSerializer):
     blood_group = serializers.ChoiceField(choices=BloodGroups.choices)
     contact_number = PhoneNumberSerializerField()
     password = serializers.CharField(write_only=True)
