@@ -54,7 +54,7 @@ THIRD_PARTY_APPS = [
     "versatileimagefield",
     "simple_history",
     "phonenumber_field",
-    # "channels",
+    "channels",
     "django_elasticsearch_dsl",
 ]
 PROJECT_APPS = [
@@ -109,7 +109,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "Multi_Vendor_Hospital_System.wsgi.application"
-# ASGI_APPLICATION = "Multi_Vendor_Hospital_System.asgi.application"
+ASGI_APPLICATION = "Multi_Vendor_Hospital_System.asgi.application"
 
 
 # Database Docker + Local
