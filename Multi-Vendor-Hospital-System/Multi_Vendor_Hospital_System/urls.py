@@ -39,6 +39,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path("temp", include("temporary.urls")),
     path("search", include("search.urls")),
     # path("chat", include("chat.urls")),
     path("patients", include("Patient.urls")),
@@ -48,7 +49,6 @@ urlpatterns = [
     path("commons", include("Common.urls")),
     path("admin/", admin.site.urls),
     path("api-auth", include("rest_framework.urls")),
-    # path("silk", include("silk.urls", namespace="silk")),
     path(
         "swagger",
         schema_view.with_ui("swagger", cache_timeout=0),
@@ -56,9 +56,9 @@ urlpatterns = [
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-# if settings.DEBUG == "True":
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-#     urlpatterns += [
-#         path("silk", include("silk.urls", namespace="silk")),
-#         path("__debug__", include("debug_toolbar.urls")),
-#     ]
+if settings.DEBUG == "True":
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [
+        path("silk", include("silk.urls", namespace="silk")),
+        path("__debug__", include("debug_toolbar.urls")),
+    ]

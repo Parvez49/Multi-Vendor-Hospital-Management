@@ -56,7 +56,9 @@ class Prescription(BaseModelWithUID):
 
 
 class PrescriptionMedicalTestConnector(BaseModelWithUID):
-    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
+    prescription = models.ForeignKey(
+        Prescription, on_delete=models.CASCADE, related_name="prescription_test"
+    )
     test = models.ForeignKey(Medical_Test, on_delete=models.CASCADE)
 
     history = HistoricalRecords()
@@ -66,7 +68,9 @@ class PrescriptionMedicalTestConnector(BaseModelWithUID):
 
 
 class PrescriptionMedicineConnector(BaseModelWithUID):
-    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
+    prescription = models.ForeignKey(
+        Prescription, on_delete=models.CASCADE, related_name="prescription_medicine"
+    )
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
 
     history = HistoricalRecords()

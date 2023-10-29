@@ -59,16 +59,10 @@ class PrescriptionSerializer(serializers.ModelSerializer):
         return patient_data
 
     def get_medical_tests(self, obj):
-        # Get the list of medical tests associated with the prescription
-        medical_tests = PrescriptionMedicalTestConnector.objects.filter(
-            prescription=obj
-        )
-        return [medical_test.test.name for medical_test in medical_tests]
+        return [medical_test.test.name for medical_test in obj.prescription_test.all()]
 
     def get_medicines(self, obj):
-        # Get the list of medicines associated with the prescription
-        medicines = PrescriptionMedicineConnector.objects.filter(prescription=obj)
-        return [medicine.medicine.name for medicine in medicines]
+        return [medicine.medicine.name for medicine in obj.prescription_medicine.all()]
 
 
 class PrescriptionMedicalTestConnectorSerializer(serializers.ModelSerializer):
@@ -159,19 +153,21 @@ class DoctorAppointmentSerializer(serializers.ModelSerializer):
         return obj.serial_no
 
     def get_hospital(self, obj):
+        obj = obj.doctor_schedule_day.doctor_schedule.hospital
         hospital_data = {
-            "hospital_name": obj.doctor_schedule_day.doctor_schedule.hospital.hospital_name,
-            "description": obj.doctor_schedule_day.doctor_schedule.hospital.description,
-            "city": obj.doctor_schedule_day.doctor_schedule.hospital.city,
+            "hospital_name": obj.hospital_name,
+            "description": obj.description,
+            "city": obj.city,
         }
         return hospital_data
 
     def get_doctor(self, obj):
+        doctor_obj = obj.doctor_schedule_day.doctor_schedule.doctor
         doctor_data = {
             "uuid": obj.uuid,
-            "name": f"{obj.doctor_schedule_day.doctor_schedule.doctor.doctor_info.first_name} {obj.doctor_schedule_day.doctor_schedule.doctor.doctor_info.last_name}",
-            "department": obj.doctor_schedule_day.doctor_schedule.doctor.department,
-            "degrees": obj.doctor_schedule_day.doctor_schedule.doctor.degrees,
+            "name": f"{doctor_obj.doctor_info.first_name} {doctor_obj.doctor_info.last_name}",
+            "department": doctor_obj.department,
+            "degrees": doctor_obj.degrees,
         }
         return doctor_data
 

@@ -60,9 +60,11 @@ class PrescriptionMedicineConnectorListCreate(ListCreateAPIView):
         return context
 
     def get_queryset(self):
-        email = self.request.user.email
-        queryset = PrescriptionMedicineConnector.objects.filter(
-            prescription__patient_doctor_booking__doctor_schedule_day__doctor_schedule__doctor__doctor_info__email=email
+        user = self.request.user
+        queryset = PrescriptionMedicineConnector.objects.select_related(
+            "medicine"
+        ).filter(
+            prescription__patient_doctor_booking__doctor_schedule_day__doctor_schedule__doctor__doctor_info=user
         )
         return queryset
 
@@ -78,9 +80,11 @@ class PrescriptionMedicalTestConnectorListCreate(ListCreateAPIView):
         return context
 
     def get_queryset(self):
-        email = self.request.user.email
-        queryset = PrescriptionMedicalTestConnector.objects.filter(
-            prescription__patient_doctor_booking__doctor_schedule_day__doctor_schedule__doctor__doctor_info__email=email
+        user = self.request.user
+        queryset = PrescriptionMedicalTestConnector.objects.select_related(
+            "test"
+        ).filter(
+            prescription__patient_doctor_booking__doctor_schedule_day__doctor_schedule__doctor__doctor_info=user
         )
         return queryset
 
@@ -93,12 +97,19 @@ class DoctorAppointmentsPrescriptionDetail(RetrieveAPIView):
     permission_classes = [IsAppointmentDoctor]
 
     def get_object(self):
-        user_email = self.request.user.email
+        user = self.request.user
         uuid = self.kwargs.get("prescription_uuid")
-        obj = Prescription.objects.filter(
-            uuid=uuid,
-            patient_doctor_booking__doctor_schedule_day__doctor_schedule__doctor__doctor_info__email=user_email,
-        ).first()
+        obj = (
+            Prescription.objects.select_related("patient_doctor_booking__patient")
+            .prefetch_related(
+                "prescription_test__test", "prescription_medicine__medicine"
+            )
+            .filter(
+                uuid=uuid,
+                patient_doctor_booking__doctor_schedule_day__doctor_schedule__doctor__doctor_info=user,
+            )
+            .first()
+        )
         return obj
 
 
@@ -112,9 +123,15 @@ class DoctorAppointmentsPrescription(ListCreateAPIView):
         return context
 
     def get_queryset(self):
-        user_email = self.request.user.email
-        queryset = Prescription.objects.filter(
-            patient_doctor_booking__doctor_schedule_day__doctor_schedule__doctor__doctor_info__email=user_email
+        user = self.request.user
+        queryset = (
+            Prescription.objects.select_related("patient_doctor_booking__patient")
+            .prefetch_related(
+                "prescription_test__test", "prescription_medicine__medicine"
+            )
+            .filter(
+                patient_doctor_booking__doctor_schedule_day__doctor_schedule__doctor__doctor_info=user
+            )
         )
         return queryset
 
@@ -126,10 +143,21 @@ class DoctorAppointmentsDetail(RetrieveAPIView):
     def get_object(self):
         user_email = self.request.user.email
         uuid = self.kwargs.get("appointment_uuid")
-        obj = DoctorAppointment.objects.filter(
-            uuid=uuid,
-            doctor_schedule_day__doctor_schedule__doctor__doctor_info__email=user_email,
-        ).first()
+        obj = (
+            DoctorAppointment.objects.select_related(
+                "doctor_schedule_day",
+                "patient",
+                "doctor_schedule_day__doctor_schedule",
+                "doctor_schedule_day__doctor_schedule__hospital",
+                "doctor_schedule_day__doctor_schedule__doctor",
+                "doctor_schedule_day__doctor_schedule__doctor__doctor_info",
+            )
+            .filter(
+                uuid=uuid,
+                doctor_schedule_day__doctor_schedule__doctor__doctor_info__email=user_email,
+            )
+            .first()
+        )
 
         return obj
 
@@ -139,8 +167,15 @@ class DoctorAppointmentsList(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        queryset = DoctorAppointment.objects.filter(
-            doctor_schedule_day__doctor_schedule__doctor__doctor_info__email=self.request.user.email
+        queryset = DoctorAppointment.objects.select_related(
+            "doctor_schedule_day",
+            "patient",
+            "doctor_schedule_day__doctor_schedule",
+            "doctor_schedule_day__doctor_schedule__hospital",
+            "doctor_schedule_day__doctor_schedule__doctor",
+            "doctor_schedule_day__doctor_schedule__doctor__doctor_info",
+        ).filter(
+            doctor_schedule_day__doctor_schedule__doctor__doctor_info=self.request.user
         )
         return queryset
 

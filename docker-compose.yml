@@ -26,16 +26,16 @@ services:
     depends_on:
       - db
       - redis
-      - elasticsearch
-      - daphne 
+  #     - elasticsearch
+  #     - daphne 
       
-  daphne:
-    image: daphne/daphne
-    command: daphne -u /tmp/daphne.sock Multi-Vendor-Hospital-System.asgi:application
-    volumes:
-      - ./Multi-Vendor-Hospital-System:/Multi-Vendor-Hospital-System:z
-    depends_on:
-      - redis  # Ensure it can connect to the Redis service
+  # daphne:
+  #   image: daphne/daphne
+  #   command: daphne -u /tmp/daphne.sock Multi-Vendor-Hospital-System.asgi:application
+  #   volumes:
+  #     - ./Multi-Vendor-Hospital-System:/Multi-Vendor-Hospital-System:z
+  #   depends_on:
+  #     - redis  # Ensure it can connect to the Redis service
     
       
 
@@ -103,12 +103,12 @@ services:
       - project
       - celery_worker
 
-  elasticsearch:
-    image: elasticsearch:5.6.16-alpine
-    environment:
-      - discovery.type=single-node
-    ports:
-      - "9200:9200"
+  # elasticsearch:
+  #   image: elasticsearch:5.6.16-alpine
+  #   environment:
+  #     - discovery.type=single-node
+  #   ports:
+  #     - "9200:9200"
       
     
 volumes:
