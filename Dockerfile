@@ -1,8 +1,6 @@
 FROM python:3.9-alpine3.13
 LABEL maintainer="phcloud.com"
 
-#RUN apk add --no-cache libmagic
-
 ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /tmp/requirements.txt
