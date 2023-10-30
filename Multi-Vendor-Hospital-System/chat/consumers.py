@@ -18,10 +18,12 @@ class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.doctor_slug = self.scope["url_route"]["kwargs"]["doctor_slug"]
         self.patient_uuid = self.scope["url_route"]["kwargs"]["patient_uuid"]
+        print(self.patient_uuid)
 
         self.doctor = Doctor.objects.filter(slug=self.doctor_slug).first()
         self.patient = User.objects.filter(uuid=self.patient_uuid).first()
         print(self.doctor)
+        print(self.patient)
         if not self.doctor or not self.patient:  # if not appointment also added later
             print("You are not permitted")
             return

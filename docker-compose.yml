@@ -13,6 +13,7 @@ services:
     #user: user1
     command: >
       sh -c "python manage.py wait_for_db &&
+             python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     
@@ -26,18 +27,7 @@ services:
     depends_on:
       - db
       - redis
-  #     - elasticsearch
-  #     - daphne 
-      
-  # daphne:
-  #   image: daphne/daphne
-  #   command: daphne -u /tmp/daphne.sock Multi-Vendor-Hospital-System.asgi:application
-  #   volumes:
-  #     - ./Multi-Vendor-Hospital-System:/Multi-Vendor-Hospital-System:z
-  #   depends_on:
-  #     - redis  # Ensure it can connect to the Redis service
-    
-      
+  #    - elasticsearch
 
   db:
     image: postgres:14-alpine
@@ -52,6 +42,8 @@ services:
     image: redis:7-alpine
     command: redis-server
   
+
+
   celery_worker:
     build:
       context: .
@@ -104,12 +96,14 @@ services:
       - celery_worker
 
   # elasticsearch:
-  #   image: elasticsearch:5.6.16-alpine
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.10.4
   #   environment:
   #     - discovery.type=single-node
   #   ports:
   #     - "9200:9200"
+  #   volumes:
+  #     - es-data:/usr/share/elasticsearch/data
       
-    
 volumes:
-  dev-db-data:
+  dev-db-data:  
+  es-data: 

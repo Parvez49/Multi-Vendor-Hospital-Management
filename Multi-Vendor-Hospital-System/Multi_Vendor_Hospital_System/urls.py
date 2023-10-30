@@ -39,9 +39,9 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path("temp", include("temporary.urls")),
-    path("search", include("search.urls")),
-    # path("chat", include("chat.urls")),
+    # path("temp", include("temporary.urls")),
+    # path("search", include("search.urls")),
+    path("chat", include("chat.urls")),
     path("patients", include("Patient.urls")),
     path("doctors", include("Doctor.urls")),
     path("hospitals", include("Hospital.urls")),

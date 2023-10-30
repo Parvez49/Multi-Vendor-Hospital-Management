@@ -55,7 +55,7 @@ THIRD_PARTY_APPS = [
     "simple_history",
     "phonenumber_field",
     "channels",
-    "django_elasticsearch_dsl",
+    # "django_elasticsearch_dsl",
 ]
 PROJECT_APPS = [
     "core",
@@ -64,9 +64,9 @@ PROJECT_APPS = [
     "Hospital",
     "Doctor",
     "Patient",
-    "search",
+    # "search",
     "chat",
-    "temporary",
+    # "temporary",
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
@@ -254,11 +254,19 @@ CACHES = {
 }
 
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
+}
 # CHANNEL_LAYERS = {
 #     "default": {
 #         "BACKEND": "channels_redis.core.RedisChannelLayer",
 #         "CONFIG": {
-#             "hosts": [("127.0.0.1", 6379)],
+#             "hosts": [("127.0.0.1", 6379 / 5)],
 #         },
 #     },
 # }
@@ -271,10 +279,11 @@ SIMPLE_JWT = {
 }
 
 
-ELASTICSEARCH_DSL = {
-    "default": {
-        "hosts": "https://localhost:9200",
-        "http_auth": ("elastic", "Of4gkT_0MrV5n0GLht10"),
-        "verify_certs": False,
-    }
-}
+# ELASTICSEARCH_DSL = {
+#     "default": {
+#         # "hosts": "https://localhost:9200",
+#         "hosts": "http://127.0.0.1:9200",
+#         "http_auth": ("elastic", "EMoIrqXrKsRxaybiEQm3"),
+#         # "verify_certs": False,
+#     }
+# }
