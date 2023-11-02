@@ -27,7 +27,7 @@ services:
     depends_on:
       - db
       - redis
-  #    - elasticsearch
+      - elasticsearch
 
   db:
     image: postgres:14-alpine
@@ -95,14 +95,14 @@ services:
       - project
       - celery_worker
 
-  # elasticsearch:
-  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.10.4
-  #   environment:
-  #     - discovery.type=single-node
-  #   ports:
-  #     - "9200:9200"
-  #   volumes:
-  #     - es-data:/usr/share/elasticsearch/data
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.4
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
       
 volumes:
   dev-db-data:  

@@ -55,6 +55,7 @@ THIRD_PARTY_APPS = [
     "simple_history",
     "phonenumber_field",
     "channels",
+    "storages",  # AWS S3
     # "django_elasticsearch_dsl",
 ]
 PROJECT_APPS = [
@@ -174,11 +175,42 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-# STATIC_ROOT = STATIC_DIR
-STATIC_URL = "static/"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/media/"
+USE_AWS = os.getenv("USE_AWS") == "True"
+
+if USE_AWS:
+    if os.getenv("USE_S3") == "True":
+        AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+        AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+        AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+        AWS_DEFAULT_ACL = "public-read"
+        AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+        AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+        # s3 static settings
+        AWS_LOCATION = "static"
+        STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
+        STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+        # Public media storage
+        PUBLIC_MEDIA_LOCATION = "media"
+        MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+        DEFAULT_FILE_STORAGE = (
+            "Multi_Vendor_Hospital_System.storage_backends.PublicMediaStorage"
+        )
+
+        # # Private media storage
+        # PRIVATE_MEDIA_LOCATION = "private"
+        # PRIVATE_FILE_STORAGE = (
+        #     "Multi_Vendor_Hospital_System.storage_backends.PrivateMediaStorage"
+        # )
+else:
+    STATIC_URL = "static/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+    MEDIA_URL = "/media/"
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "chat/static"),)
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -254,22 +286,25 @@ CACHES = {
 }
 
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("redis", 6379)],
-        },
-    },
-}
+# # Docker Channel layers
 # CHANNEL_LAYERS = {
 #     "default": {
 #         "BACKEND": "channels_redis.core.RedisChannelLayer",
 #         "CONFIG": {
-#             "hosts": [("127.0.0.1", 6379 / 5)],
+#             "hosts": [("redis", 6379)],
 #         },
 #     },
 # }
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),

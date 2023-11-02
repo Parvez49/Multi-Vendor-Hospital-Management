@@ -4,7 +4,7 @@ console.log("Sanity check from room.js.");
 
 
 const doctor='istiaq-ahmed';
-const patient='bca9de3e-ddde-4765-bf43-fc960bb0ae3f'
+const patient='a42b8162-8a0e-47d6-9505-e43255a2b4d8'
 
 let chatLog = document.querySelector("#chatLog");
 let chatMessageInput = document.querySelector("#chatMessageInput");
