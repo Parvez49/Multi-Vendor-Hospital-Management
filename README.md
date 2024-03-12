@@ -43,6 +43,7 @@ The "Multi-Vendor Hospital Management" project is a robust and versatile hospita
    ```
    Now migrate:
    ```
+     python manage.py makemigrations
      python manage.py migrate
    ```
 5. Start the development server:
