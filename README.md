@@ -62,7 +62,7 @@ The "Multi-Vendor Hospital Management" project is a robust and versatile hospita
    ```
         redis-server
    ```
-    To start the Celery worker and Celery beat (in separate terminals):
+    To start the Celery worker and Celery beat (both in separate terminals):
    ```
          # Make sure your terminal location is where manage.py is located
          celery worker: celery -A Multi_Vendor_Hospital_System worker --loglevel=info
